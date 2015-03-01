@@ -1,0 +1,1 @@
+{"cities":[{"name":"Moscow","country":"RU"},{"name":"Saint Petersburg","country":"RU"},{"name":"Roma","country":"IT"},{"name":"Paris","country":"FR"},{"name":"San Jose","country":"CR"},{"name":"Marrakesh","country":"MA"},{"name":"Colombo","country":"LK"},{"name":"Rio de Janeiro","country":"BR"}]}
