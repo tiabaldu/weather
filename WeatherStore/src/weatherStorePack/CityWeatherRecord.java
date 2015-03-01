@@ -1,10 +1,11 @@
 package weatherStorePack;
 
+// contains data about weather in city at some date
 public class CityWeatherRecord {
-	private int id;
+	private long id;
 	private CityRecord city;
 	private int date;
-	private int rainInPercents;
+	private float cloudsInPercents;
 	private double temperature;
 	
 	public enum RetCodes {
@@ -16,7 +17,7 @@ public class CityWeatherRecord {
 				
 	};
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	public String getName() {
@@ -25,14 +26,14 @@ public class CityWeatherRecord {
 	public int getWeatherDate() {
 		return date;
 	}
-	public int getRain() {
-		return rainInPercents;
+	public float getClouds() {
+		return cloudsInPercents;
 	}
 	public double getTemperature() {
 		return temperature;
 	}
 	
-	public void setId(int newid) {
+	public void setId(long newid) {
 		id = newid;
 	}
 	public void setCity(CityRecord newcity) {
@@ -41,26 +42,34 @@ public class CityWeatherRecord {
 	public void setDate(int newdate) {
 		date = newdate;
 	}
-	public void setRain(int rain) {
-		rainInPercents = rain;
+	public void setClouds(float rain) {
+		cloudsInPercents = rain;
 	}
 	public void setTemperature(double temp) {
 		temperature = temp;
 	}
 	
+	/* CityWeatherRecord comparator
+	 * returns CMP_RETCODE_ERROR if we trying to compare weather in different cities 
+	 * or weather at different days
+	 * CMP_RETCODE_EQUAL if weather in city not changed
+	 * CMP_RETCODE_TEMP if temperature at this date changed
+	 * CMP_RETCODE_RAIN if rainy changed 
+	 * CMP_RETCODE_TEMP_RAIN if temperature and rainy at this day changed
+	 */
 	public RetCodes compareWeather(CityWeatherRecord rec) {
 		if ((id != rec.getId()) 
 				|| (city.name.compareTo(rec.getName()) != 0)
 				|| (id == rec.getId() && date != rec.getWeatherDate())) {
 			return RetCodes.CMP_RETCODE_ERROR;
 		} else {
-			if (temperature == rec.getTemperature() && rainInPercents == rec.getRain()) {
+			if (temperature == rec.getTemperature() && cloudsInPercents == rec.getClouds()) {
 				return RetCodes.CMP_RETCODE_EQUAL;
-			} else if (temperature != rec.getTemperature() && rainInPercents == rec.getRain()) {
+			} else if (temperature != rec.getTemperature() && cloudsInPercents == rec.getClouds()) {
 				return RetCodes.CMP_RETCODE_TEMP;
-			} else if (temperature == rec.getTemperature() && rainInPercents != rec.getRain()) {
+			} else if (temperature == rec.getTemperature() && cloudsInPercents != rec.getClouds()) {
 				return RetCodes.CMP_RETCODE_RAIN;
-			} else if (temperature != rec.getTemperature() && rainInPercents != rec.getRain()) {
+			} else if (temperature != rec.getTemperature() && cloudsInPercents != rec.getClouds()) {
 				return RetCodes.CMP_RETCODE_TEMP_RAIN;
 			}
 		}

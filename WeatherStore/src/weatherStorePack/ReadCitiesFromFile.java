@@ -16,6 +16,7 @@ public class ReadCitiesFromFile {
 	
 	public boolean readCitiesFromFile() {
 		String strCities;
+		// try to read cities from file
 		File file = new File("cities.txt"); 
 		try {
 			FileReader reader = new FileReader(file);
@@ -28,12 +29,13 @@ public class ReadCitiesFromFile {
 			return false;
 		}
 		
+		// try to parse cities
 		try {
             JSONObject jsonObject = new JSONObject(strCities);
             JSONArray citiesArray = jsonObject.getJSONArray(JsonStrings.JSON_TAG_CITIES);
             cities = new LinkedList<CityRecord>();
             for (int i = 0; i < citiesArray.length(); i++) {
-                String jsonWithCity = citiesArray.getString(i);
+            	JSONObject jsonWithCity = citiesArray.getJSONObject(i);
                 CityRecord city = cityFromJsonInternal(jsonWithCity);
                 cities.add(city);
             }
@@ -44,8 +46,8 @@ public class ReadCitiesFromFile {
 		return false;
 	}
 	
-	private CityRecord cityFromJsonInternal(String json) throws JSONException {
-		JSONObject jsonObject = new JSONObject(json);
+	// parse one city from json
+	private CityRecord cityFromJsonInternal(JSONObject jsonObject) throws JSONException {
 		CityRecord city = new CityRecord();
         city.name = jsonObject.getString(JsonStrings.JSON_TAG_CITY_NAME);
         city.country = jsonObject.getString(JsonStrings.JSON_TAG_COUNTRY);
