@@ -1,12 +1,15 @@
 package weatherStorePack;
 
+import java.util.Date;
+
 // contains data about weather in city at some date
 public class CityWeatherRecord {
 	private long id;
 	private CityRecord city;
-	private int date;
+	private Date date;
 	private float cloudsInPercents;
 	private double temperature;
+	private RetCodes whatToUpdate = RetCodes.CMP_RETCODE_EQUAL; //nothing to update
 	
 	public enum RetCodes {
 		CMP_RETCODE_ERROR,	// if trying to compare different cities, or different date
@@ -23,7 +26,7 @@ public class CityWeatherRecord {
 	public String getName() {
 		return city.name;
 	}
-	public int getWeatherDate() {
+	public Date getWeatherDate() {
 		return date;
 	}
 	public float getClouds() {
@@ -32,6 +35,9 @@ public class CityWeatherRecord {
 	public double getTemperature() {
 		return temperature;
 	}
+	public RetCodes getUpdateNecessity() {
+		return whatToUpdate;
+	}
 	
 	public void setId(long newid) {
 		id = newid;
@@ -39,7 +45,7 @@ public class CityWeatherRecord {
 	public void setCity(CityRecord newcity) {
 		city = newcity;
 	}
-	public void setDate(int newdate) {
+	public void setDate(Date newdate) {
 		date = newdate;
 	}
 	public void setClouds(float rain) {
@@ -47,6 +53,10 @@ public class CityWeatherRecord {
 	}
 	public void setTemperature(double temp) {
 		temperature = temp;
+	}
+	
+	public void setUpdateNecessity(RetCodes code) {
+		whatToUpdate = code;
 	}
 	
 	/* CityWeatherRecord comparator
@@ -60,7 +70,7 @@ public class CityWeatherRecord {
 	public RetCodes compareWeather(CityWeatherRecord rec) {
 		if ((id != rec.getId()) 
 				|| (city.name.compareTo(rec.getName()) != 0)
-				|| (id == rec.getId() && date != rec.getWeatherDate())) {
+				|| (id == rec.getId() && !compareDate(rec.getWeatherDate()))) {
 			return RetCodes.CMP_RETCODE_ERROR;
 		} else {
 			if (temperature == rec.getTemperature() && cloudsInPercents == rec.getClouds()) {
@@ -75,5 +85,22 @@ public class CityWeatherRecord {
 		}
 		
 		return RetCodes.CMP_RETCODE_ERROR;
+	}
+	
+	@SuppressWarnings("deprecation")
+	private boolean compareDate(Date d) {
+		if (date.getDay() == d.getDay() && date.getYear() == d.getYear()) {
+			return true;
+		}
+		return false;
+	}
+
+	public void printCity() {
+		System.out.println("City: " + city.name);
+		System.out.println("Date: "	+ date.toString());
+		System.out.println("Date: "	+ date.getTime());
+		System.out.println("code: " + id);
+		System.out.println("temp: " + temperature);
+		System.out.println("clouds: " + cloudsInPercents);
 	}
 }

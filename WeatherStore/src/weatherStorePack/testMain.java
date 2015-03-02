@@ -1,6 +1,7 @@
 package weatherStorePack;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONException;
@@ -11,16 +12,17 @@ public class testMain {
             throws IOException, JSONException {
 		 System.out.println("Hello, world");
 		 ReadCitiesFromFile reader = new ReadCitiesFromFile();
+		 WorkWithDB db = new WorkWithDB();
+		 List<CityWeatherRecord> citiesWeather = new LinkedList<CityWeatherRecord>();
 		 if (reader.readCitiesFromFile()) {
 			 List<CityRecord> crds = reader.getCities();
-			 for (int i = 0; i < crds.size(); i++) {
-				 System.out.println(crds.get(i).name);
-			 }
 			 WeatherRetreiver weathers = new WeatherRetreiver();
-			 weathers.retreiveTodayCitiesWeather(crds);
+			 citiesWeather = weathers.checkForUpdates(crds);
 			 
-			 weathers.getForecast();
 		 }		 		 
+		 
+		 db.createTable();
+		 db.insertDataIntoDB(citiesWeather);
 	}
 }
  
