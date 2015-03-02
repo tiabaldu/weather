@@ -13,7 +13,7 @@ import net.aksingh.owmjapis.OpenWeatherMap;
 
 public class WeatherRetreiver {
 	private OpenWeatherMap owm = null;
-	private final static int DAYS_FOR_FORECAST = 14;
+	private final static int DAYS_FOR_FORECAST = 10;
 	private List<CityWeatherRecord> lastUpdatedWeatherList = null;
 
 	private void init() {
@@ -38,13 +38,13 @@ public class WeatherRetreiver {
 
 			// checking data retrieval was successful or not
 			if (cwd.isValid()) {
-				CityWeatherRecord cityRec = new CityWeatherRecord();
-				cityRec.setCity(city);
-				cityRec.setId(cwd.getCityCode());
-				cityRec.setTemperature(toCelcium(cwd.getMainInstance().getTemperature()));
-				cityRec.setClouds(cwd.getCloudsInstance().getPercentageOfClouds());
 				Date date = Calendar.getInstance().getTime();
-				cityRec.setDate(date);
+				CityWeatherRecord cityRec = new CityWeatherRecord(cwd.getCityCode(),
+												city, 
+												date, 
+												cwd.getCloudsInstance().getPercentageOfClouds(),
+												toCelcium(cwd.getMainInstance().getTemperature()));
+				
 				//TODO rm print
 				cityRec.printCity();
 				
@@ -77,12 +77,11 @@ public class WeatherRetreiver {
 				List<CityWeatherRecord> weatherList = new LinkedList<CityWeatherRecord>();
 				for (int i = 0; i < DAYS_FOR_FORECAST; i++) {
 					Forecast daily = fcst.getForecastInstance(i);
-					CityWeatherRecord cityWeather = new CityWeatherRecord();
-					cityWeather.setCity(city);
-					cityWeather.setDate(daily.getDateTime());
-					cityWeather.setId(fcst.getCityInstance().getCityCode());
-					cityWeather.setTemperature(toCelcium(daily.getTemperatureInstance().getDayTemperature()));
-					cityWeather.setClouds(daily.getPercentageOfClouds());
+					CityWeatherRecord cityWeather = new CityWeatherRecord(fcst.getCityInstance().getCityCode(),
+													city,
+													daily.getDateTime(),
+													daily.getPercentageOfClouds(),
+													toCelcium(daily.getTemperatureInstance().getDayTemperature()));
 
 					//TODO rm print
 					cityWeather.printCity();

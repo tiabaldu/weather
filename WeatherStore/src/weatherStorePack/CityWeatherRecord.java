@@ -20,6 +20,15 @@ public class CityWeatherRecord {
 				
 	};
 	
+	public CityWeatherRecord(long newid, CityRecord newcity, Date newdate, 
+					float clouds, double temp){
+		id = newid;
+		city = newcity;
+		date = newdate;
+		cloudsInPercents = clouds;
+		temperature = temp;
+	}
+	
 	public long getId() {
 		return id;
 	}

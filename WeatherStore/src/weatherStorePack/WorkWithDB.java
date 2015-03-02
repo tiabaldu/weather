@@ -127,7 +127,7 @@ public class WorkWithDB {
 		return sb.toString();
 	}
 	
-	public String constructInsertFromCitiesList(List<CityWeatherRecord> cities) {
+	private String constructInsertFromCitiesList(List<CityWeatherRecord> cities) {
 		return constructDataToInsert(constructRequestFromCities(cities));
 	}
 }
