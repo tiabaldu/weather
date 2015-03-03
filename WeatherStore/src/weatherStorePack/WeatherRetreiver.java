@@ -14,7 +14,8 @@ import net.aksingh.owmjapis.OpenWeatherMap;
 public class WeatherRetreiver {
 	private OpenWeatherMap owm = null;
 	private final static int DAYS_FOR_FORECAST = 10;
-	private List<CityWeatherRecord> lastUpdatedWeatherList = null;
+	private List<List<CityWeatherRecord>> lastUpdatedWeatherList = null;
+	private int amountOfCities = 0;
 
 	private void init() {
 		// declaring object of "OpenWeatherMap" class
@@ -44,9 +45,6 @@ public class WeatherRetreiver {
 												date, 
 												cwd.getCloudsInstance().getPercentageOfClouds(),
 												toCelcium(cwd.getMainInstance().getTemperature()));
-				
-				//TODO rm print
-				cityRec.printCity();
 				
 				return cityRec;
 			}
@@ -98,37 +96,65 @@ public class WeatherRetreiver {
 		return null;
 	}
 
-	public List<CityWeatherRecord> dailyForecastsForAllCities(List<CityRecord> cities) {
+	public List<List<CityWeatherRecord>> dailyForecastsForAllCities(List<CityRecord> cities) {
 		if (owm == null) {
 			init();
 		}
-		List<CityWeatherRecord> weatherList = new LinkedList<CityWeatherRecord>();
-		for (int i = 0; i < cities.size(); i++) {
-			weatherList.addAll(forecastForCity(cities.get(i)));
+		amountOfCities = cities.size();
+		List<List<CityWeatherRecord>> weatherList = new LinkedList<List<CityWeatherRecord>>();
+		for (int i = 0; i < amountOfCities; i++) {
+			List<CityWeatherRecord> list = new LinkedList<CityWeatherRecord>();
+			list.addAll(forecastForCity(cities.get(i)));
+			weatherList.add(list);
 		}
 		return weatherList;
 	}
 	
 	// return updated cities weather list 
-	public List<CityWeatherRecord> checkForUpdates(List<CityRecord> cities) {
+	public List<List<CityWeatherRecord>> checkForUpdates(List<CityRecord> cities) {
 		if (lastUpdatedWeatherList == null) {
 			lastUpdatedWeatherList = dailyForecastsForAllCities(cities);
 			return lastUpdatedWeatherList;
 		} else {
-			List<CityWeatherRecord> weatherList = new LinkedList<CityWeatherRecord>();
-			List<CityWeatherRecord> updatesList = new LinkedList<CityWeatherRecord>();
+			List<List<CityWeatherRecord>> weatherList = new LinkedList<List<CityWeatherRecord>>();
+			List<List<CityWeatherRecord>> updatesList = new LinkedList<List<CityWeatherRecord>>();
 			weatherList = dailyForecastsForAllCities(cities);
-			for (int i = 0; i < weatherList.size(); i++) {
-				RetCodes code = weatherList.get(i).compareWeather(lastUpdatedWeatherList.get(i));
-				if ((code != RetCodes.CMP_RETCODE_ERROR) && (code != RetCodes.CMP_RETCODE_EQUAL)) {
-					CityWeatherRecord city = weatherList.get(i);
-					city.setUpdateNecessity(code);
-					updatesList.add(city);
+			for (int i = 0; i < amountOfCities; i++) {
+				List<CityWeatherRecord> list = new LinkedList<CityWeatherRecord>();
+				List<CityWeatherRecord> listUpdates = new LinkedList<CityWeatherRecord>();
+				list = weatherList.get(i);
+				for (int j = 0; j < list.size(); j++) {
+					//search for updates for one city and day
+					CityWeatherRecord found = searchElemByDate(lastUpdatedWeatherList.get(i), list.get(j).getWeatherDate());
+					if (found == null) {
+						// if not found - new daily forecast
+						listUpdates.add(list.get(j));
+					} else {
+						RetCodes code = list.get(j).compareWeather(found);
+						if ((code != RetCodes.CMP_RETCODE_ERROR) && (code != RetCodes.CMP_RETCODE_EQUAL)) {
+							listUpdates.add(list.get(j));
+						}
+					}					
+				}
+				if (!listUpdates.isEmpty()) {
+					updatesList.add(listUpdates);
 				}
 			}
 			lastUpdatedWeatherList = weatherList;
 			return updatesList;
 		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private CityWeatherRecord searchElemByDate(List<CityWeatherRecord> cities, Date date) {
+		CityWeatherRecord found = null;
+		for (int i = 0; i < cities.size(); i++) {
+			if (cities.get(i).getWeatherDate().getDay() == date.getDay() &&
+					cities.get(i).getWeatherDate().getYear() == date.getYear()) {
+				found = cities.get(i);
+			}
+		}
+		return found;
 	}
 	
 }

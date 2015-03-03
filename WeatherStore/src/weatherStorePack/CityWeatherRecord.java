@@ -21,14 +21,22 @@ public class CityWeatherRecord {
 	};
 	
 	public CityWeatherRecord(long newid, CityRecord newcity, Date newdate, 
-					float clouds, double temp){
+					float clouds, double temp) {
 		id = newid;
 		city = newcity;
 		date = newdate;
 		cloudsInPercents = clouds;
 		temperature = temp;
 	}
-	
+
+	public CityWeatherRecord() {
+		/*id = 0;
+		city = null;
+		date = null;
+		cloudsInPercents = (float) -1.0;
+		temperature = -273.0;*/
+	}
+
 	public long getId() {
 		return id;
 	}
