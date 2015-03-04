@@ -7,16 +7,25 @@
 </head>
 <body>
 <table class="title">
-  <tr><th>Test Web App for Test Web App for retreiving weather from openweather</th></tr>
+  <tr><th>Test Web App for retreiving weather from openweather</th></tr>
 </table>
 <p/>
 <fieldset>
-<legend>Testing Simple Servlets</legend>
+<legend>Testing Simple Weather getter from DB</legend>
 <ul>
   <li><a href="weatherRetreiver">weatherRetreiver</a> The TestServlet, accessed via
       the URL given in the web.xml file.</li>
 </ul>
+
+<p>
+        <form action="http://localhost:8080/WeatherStore/" method="GET">
+            City Code <input name="strcode" type="text"/>
+            Date (dd/mm/yyyy) <input name="strdate" type="text" />
+            <input type="submit"  value="Submit"/>
+        </form>
+</p>
 </fieldset>
 <p/>
+
 
 </body></html>
