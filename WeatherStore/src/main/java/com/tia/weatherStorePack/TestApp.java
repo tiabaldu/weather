@@ -16,9 +16,12 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-public class testMain {
+@SpringBootApplication
+public class TestApp {
 
 	public static void main(String[] args) throws IOException, JSONException {
 		System.out.println("Hello, world");
@@ -41,6 +44,8 @@ public class testMain {
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}	
+		
+		SpringApplication.run(TestApp.class, args);
 
 	}
 }

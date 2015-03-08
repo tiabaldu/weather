@@ -5,22 +5,38 @@
       href="./css/styles.css"
       type="text/css"/>
 </head>
-<body>
+<body style="background-color: #00FFCC ">
 <table class="title">
   <tr><th>Test Web App for retreiving weather from openweather</th></tr>
 </table>
 <p/>
 <fieldset>
-<legend>Testing Simple Weather getter from DB</legend>
-<ul>
-  <li><a href="weatherRetreiver">weatherRetreiver</a> The TestServlet, accessed via
-      the URL given in the web.xml file.</li>
-</ul>
+<legend style="font-weight: bold;
+  color: black;
+  background-color: #eeeeee;
+  border: 1px solid #999999;
+  padding: 3px 2px;"">Simple Weather getter from DB for these cities:</legend>
+<table>
+<tr><td>Saint Petersburg</td><td><td>city code: 498817</tr>
+<tr><td>Moscow</td><td><td>city code: 524901</td></tr>
+<tr><td>Roma</td><td><td>city code: 3169070</tr>
+<tr><td>Paris</td><td><td>city code: 6618607</tr>
+<tr><td>San Jose</td><td><td>city code: 3621849</tr>
+<tr><td>Marrakesh</td><td><td>city code: 2542997</tr>
+<tr><td>Colombo</td><td><td>city code: 1248991</tr>
+<tr><td>Rio de Janeiro</td><td><td>city code: 3451190</tr>
+</table>
+
 
 <p>
-        <form action="http://localhost:8080/WeatherStore/" method="GET">
-            City Code <input name="strcode" type="text"/>
-            Date (dd/mm/yyyy) <input name="strdate" type="text" />
+        <form action="http://localhost:8080/GetJSON/" method="GET">
+            City Code <input name="code" type="text"/>
+            Date (dd/mm/yyyy) <input name="date" type="text" />
+            <input type="submit"  value="Get JSON"/>
+        </form>
+        <form action="http://localhost:8080/GetWithView/" method="GET">
+        	City Code <input name="code" type="text"/>
+            Date (dd/mm/yyyy) <input name="date" type="text" />
             <input type="submit"  value="Submit"/>
         </form>
 </p>

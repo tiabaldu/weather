@@ -1,4 +1,4 @@
-package weatherStorePack;
+package com.tia.weatherStorePack;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.List;
 
 public class WorkWithDB {
@@ -20,8 +19,8 @@ public class WorkWithDB {
 	private static final String TABLE_NAME = "WEATHER_TABLE";
 	private static final String TABLE_VALUES = "(ID, DAY, NAME, TEMPERATURE, CLOUDS)";
 	private static final String SELECT_VALUES = "NAME, TEMPERATURE, CLOUDS";
-	private static final DateFormat dateFormat = new SimpleDateFormat(
-			"yyyy/MM/dd");
+	private static final String DATE_FORMAT = "dd/MM/yyyy";
+	private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
 	private Connection connectToDatabase() {
 		Connection con = null;
@@ -54,10 +53,8 @@ public class WorkWithDB {
 		        } catch (SQLException e) {
 		        	e.printStackTrace();
 		        }
-				// TODO: rm deleting table
-				String sql1 =  "DROP TABLE IF EXISTS " + TABLE_NAME;
-				st.executeUpdate(sql1);
-				String sql = "CREATE TABLE " + TABLE_NAME 
+				
+				String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME 
 							+ " (ID INT NOT NULL,"
 							+ "DAY TIMESTAMP NOT NULL,"
 							+ "NAME TEXT NOT NULL,"
@@ -84,7 +81,6 @@ public class WorkWithDB {
 				PreparedStatement st = null;
 				try {
 					String req = constructInsertFromCitiesList(cities);
-					System.out.println(req);
 					st = con.prepareStatement(req);
 					st.executeUpdate();
 		        } catch (SQLException e) {
@@ -151,8 +147,10 @@ public class WorkWithDB {
 						city = new CityWeatherRecord(code, cr, date,
 													rs.getFloat("CLOUDS"),
 													rs.getDouble("TEMPERATURE"));
-						//TODO rm print
+						
 						city.printCity();
+		            } else {
+		            	System.out.println("NOT FOUND!");
 		            }
 		        } catch (SQLException e) {
 		        	e.printStackTrace();
@@ -170,7 +168,15 @@ public class WorkWithDB {
 		return city;
 	}
 	
-	public void updateWeatherDB(CityWeatherRecord city) {
+	public void updateWeatherDB(List<List<CityWeatherRecord>> citiesWeather) {
+		for (int i = 0; i < citiesWeather.size(); i++) {
+			for (int j = 0; j < citiesWeather.get(i).size(); j++) {
+				updateCityWeatherDB(citiesWeather.get(i).get(j));
+			}
+		}
+	}
+	
+	public void updateCityWeatherDB(CityWeatherRecord city) {
 		if (retreiveWeatherForCodeDate(city.getId(), city.getWeatherDate()) != null) {
 			//update data
 			System.out.println("update");
@@ -219,7 +225,7 @@ public class WorkWithDB {
 		sb.append(SELECT_VALUES).append(" FROM ").append(TABLE_NAME);
 		sb.append(" WHERE id=").append(Long.toString(code));
 		sb.append(" AND day=").append("to_date('").append(dateFormat.format(date.getTime()))
-								.append("', 'yyyy/mm/dd');");
+								.append("', '").append(DATE_FORMAT).append("');");
 		return sb.toString();
 	}
 	
@@ -228,7 +234,7 @@ public class WorkWithDB {
 		sb.append(TABLE_NAME).append(" SET TEMPERATURE=").append(Double.toString(city.getTemperature()));
 		sb.append(" WHERE id=").append(Long.toString(city.getId()));
 		sb.append(" AND day=").append("to_date('").append(dateFormat.format(city.getWeatherDate().getTime()))
-								.append("', 'yyyy/mm/dd');");
+								.append("', '").append(DATE_FORMAT).append("');");
 		return sb.toString();
 	}
 	
@@ -237,7 +243,7 @@ public class WorkWithDB {
 		sb.append(TABLE_NAME).append(" SET CLOUDS=").append(Float.toString(city.getClouds()));
 		sb.append(" WHERE id=").append(Long.toString(city.getId()));
 		sb.append(" AND day=").append("to_date('").append(dateFormat.format(city.getWeatherDate().getTime()))
-								.append("', 'yyyy/mm/dd');");
+								.append("', '").append(DATE_FORMAT).append("');");
 		return sb.toString();
 	}
 	
@@ -251,7 +257,7 @@ public class WorkWithDB {
 		StringBuilder sb = new StringBuilder(LEFT_BR);
 		sb.append(Long.toString(city.getId())).append(COMMA);
 		sb.append("to_date('").append(dateFormat.format(city.getWeatherDate().getTime()))
-								.append("', 'yyyy/mm/dd')").append(COMMA);
+								.append("', '").append(DATE_FORMAT).append("')").append(COMMA);
 		sb.append(STRING_BR).append(city.getName()).append(STRING_BR).append(COMMA);
 		sb.append(Double.toString(city.getTemperature())).append(COMMA);
 		sb.append(Float.toString(city.getClouds())).append(RIGHT_BR);
@@ -261,7 +267,7 @@ public class WorkWithDB {
 	
 	private String constructRequestFromCities(List<List<CityWeatherRecord>> cities) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < cities.size() - 1; i++) {
+		for (int i = 0; i < cities.size(); i++) {
 			for (int j = 0; j < cities.get(i).size(); j++) {
 				sb.append(constructOneCityRecord(cities.get(i).get(j))).append(COMMA);
 			}			

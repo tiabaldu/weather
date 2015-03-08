@@ -1,11 +1,12 @@
-package weatherStorePack;
+package com.tia.weatherStorePack;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import weatherStorePack.CityWeatherRecord.RetCodes;
+import com.tia.weatherStorePack.CityWeatherRecord.RetCodes;
+
 import net.aksingh.owmjapis.CurrentWeather;
 import net.aksingh.owmjapis.DailyForecast;
 import net.aksingh.owmjapis.DailyForecast.Forecast;
@@ -22,12 +23,12 @@ public class WeatherRetreiver {
 		owm = new OpenWeatherMap("9229fc57d217e84684dfb717867b67f5");
 	}
 
+	// convert Farenheit to Celcium
 	private double toCelcium(double temp) {
 		return Math.round((5 * (temp - 32.0)) / 9);
-		// return Math.floor(((5 * (temp - 32.0))/9)*100)/100; round to 2
-		// decimals after point
 	}
 
+	//retreives current (now) weather for city from openweathermap.org
 	public CityWeatherRecord currentWeatherForCity(CityRecord city) {
 		if (owm == null) {
 			return null;
@@ -54,6 +55,7 @@ public class WeatherRetreiver {
 		return null;
 	}
 
+	//retreives current (now) weather for list of cities from openweathermap.org
 	public void retreiveTodayCitiesWeather(List<CityRecord> cities) {
 		if (owm == null) {
 			init();
@@ -81,8 +83,6 @@ public class WeatherRetreiver {
 													daily.getPercentageOfClouds(),
 													toCelcium(daily.getTemperatureInstance().getDayTemperature()));
 
-					//TODO rm print
-					cityWeather.printCity();
 					weatherList.add(cityWeather);
 
 				}
@@ -96,6 +96,7 @@ public class WeatherRetreiver {
 		return null;
 	}
 
+	// returns weather forecast for list of cities
 	public List<List<CityWeatherRecord>> dailyForecastsForAllCities(List<CityRecord> cities) {
 		if (owm == null) {
 			init();
@@ -146,6 +147,7 @@ public class WeatherRetreiver {
 	}
 	
 	@SuppressWarnings("deprecation")
+	//searching weather forecast by city code and date
 	private CityWeatherRecord searchElemByDate(List<CityWeatherRecord> cities, Date date) {
 		CityWeatherRecord found = null;
 		for (int i = 0; i < cities.size(); i++) {
