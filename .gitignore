@@ -1,5 +1,8 @@
 *.class
 *~
 .classpath
-
+*.jar
+*.war
+.gradle
+/build
 
